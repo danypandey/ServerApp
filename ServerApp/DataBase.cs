@@ -58,6 +58,7 @@ namespace ServerApp
                 return new Result
                 {
                     Error_code = 1,
+                    CurrentStableVersion = latestVersion.ToString(),
                     MandatoryUpdate = mandatoryUpdate
                 };
             }
@@ -86,7 +87,7 @@ namespace ServerApp
             }
             return new Result
             {
-                CurrentStableVersion = linkMSI
+                latestVersionLink = linkMSI
             };
         }
 

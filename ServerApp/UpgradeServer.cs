@@ -20,8 +20,7 @@ namespace ServerApp
         }
 
         DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
-
-        
+       
 
         public async Task<Result> ValidateClientVersion(string clientVersion)
         {
