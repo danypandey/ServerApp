@@ -36,12 +36,13 @@ namespace ServerApp
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    latestVersion = float.Parse(reader.GetString(0));
-                    mandatoryUpdate = bool.Parse(reader.GetString(1));
+                    latestVersion = reader.GetFloat(0);
+                    mandatoryUpdate = reader.GetBoolean(2);
                 }
             }
             catch (Exception msg)
             {
+                Console.WriteLine(msg);
             }
 
             if (currentClientVersion == latestVersion)
@@ -62,9 +63,31 @@ namespace ServerApp
             }
         }
 
-        internal async Task<Result> downloadBinaries(string VersionNumber)
+        internal async Task<Result> downloadBinaries(string versionNumber)
         {
-            throw new NotImplementedException();
+            float latestVersion;
+            bool num = float.TryParse(versionNumber, out latestVersion);
+
+            try
+            {
+                var cmd = new NpgsqlCommand();
+                cmd.Connection = con;
+                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VersionNumber\" = '" + latestVersion + "' ";
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    linkMSI = reader.GetString(1);
+                }
+            }
+            catch (Exception msg)
+            {
+                Console.WriteLine(msg);
+            }
+            return new Result
+            {
+                CurrentStableVersion = linkMSI
+            };
         }
 
         internal async Task<Result> notifyAllClients()

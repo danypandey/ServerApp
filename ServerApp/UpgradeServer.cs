@@ -7,14 +7,14 @@ using System.ServiceModel;
 namespace ServerApp
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class Server : IUpdateManager
+    class UpgradeServer : IUpdateManager
     {
-        public Server()
+        public UpgradeServer()
         {
             database.con.Open();
         }
 
-        ~Server()
+        ~UpgradeServer()
         {
             database.con.Close();
         }
@@ -38,15 +38,15 @@ namespace ServerApp
 
         public async Task<Result> DownloadBinaries(string VersionNumber)
         {
-            Result binariesUpdatedMSI = null;
+            Result latestMSILink = null;
             try
             {
-                binariesUpdatedMSI = await database.downloadBinaries(VersionNumber);
+                latestMSILink = await database.downloadBinaries(VersionNumber);
             }
             catch (Exception msg)
             {
             }
-            return binariesUpdatedMSI;
+            return latestMSILink;
         }
 
         public async Task<Result> NotifyAllClients()

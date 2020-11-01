@@ -9,7 +9,7 @@ namespace ServerApp
     {
         internal void Start(Uri baseAddress)
         {
-            GenericHttpService<Server, IUpdateManager> service = new GenericHttpService<Server, IUpdateManager>(baseAddress.ToString(), false);
+            GenericHttpService<UpgradeServer, IUpdateManager> service = new GenericHttpService<UpgradeServer, IUpdateManager>(baseAddress.ToString(), false);
             try
             {
                 service.StartHost();
