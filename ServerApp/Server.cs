@@ -2,13 +2,12 @@
 using System.Threading.Tasks;
 using UserCommonApp;
 using System.ServiceModel;
-using Ziroh.Misc.Logging;
 
 
 namespace ServerApp
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class Server : IUserService
+    class Server : IUpdateManager
     {
         public Server()
         {
@@ -20,7 +19,9 @@ namespace ServerApp
             database.con.Close();
         }
 
-        DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = MyHost");
+        DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
+
+        
 
         public async Task<Result> ValidateClientVersion(string clientVersion)
         {
