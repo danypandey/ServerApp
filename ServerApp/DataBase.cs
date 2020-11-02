@@ -64,7 +64,7 @@ namespace ServerApp
             }
         }
 
-        internal async Task<Result> downloadBinaries(string versionNumber)
+        internal async Task<Result> fetchMsiLink(string versionNumber)
         {
             float latestVersion;
             bool num = float.TryParse(versionNumber, out latestVersion);
@@ -73,7 +73,7 @@ namespace ServerApp
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VersionNumber\" = '" + latestVersion + "' ";
+                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VerSionNumber\" = '" + latestVersion + "' ";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {

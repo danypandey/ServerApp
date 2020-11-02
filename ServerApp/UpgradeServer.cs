@@ -9,7 +9,8 @@ namespace ServerApp
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class UpgradeServer : IUpdateManager
     {
-        public UpgradeServer()
+        DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
+        /*public UpgradeServer()
         {
             database.con.Open();
         }
@@ -17,14 +18,12 @@ namespace ServerApp
         ~UpgradeServer()
         {
             database.con.Close();
-        }
-
-        DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
-       
-
+        }*/
+        
         public async Task<Result> ValidateClientVersion(string clientVersion)
         {
             Result validateVersion = null;
+            database.con.Open();
             try
             {
                 validateVersion = await database.validateClientVersion(clientVersion);
@@ -32,25 +31,29 @@ namespace ServerApp
             catch (Exception msg)
             {
             }
+            database.con.Close();
             return validateVersion;
         }
 
-        public async Task<Result> DownloadBinaries(string VersionNumber)
+        public async Task<Result> fetchMSILink(string VersionNumber)
         {
             Result latestMSILink = null;
+            database.con.Open();
             try
             {
-                latestMSILink = await database.downloadBinaries(VersionNumber);
+                latestMSILink = await database.fetchMsiLink(VersionNumber);
             }
             catch (Exception msg)
             {
             }
+            database.con.Close();
             return latestMSILink;
         }
 
         public async Task<Result> NotifyAllClients()
         {
             Result clientNotify = null;
+            database.con.Open();
             try
             {
                 clientNotify = await database.notifyAllClients();
@@ -58,6 +61,7 @@ namespace ServerApp
             catch (Exception msg)
             {
             }
+            database.con.Close();
             return clientNotify;
         }
     }
