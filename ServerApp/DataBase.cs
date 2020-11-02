@@ -73,7 +73,7 @@ namespace ServerApp
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VerSionNumber\" = '" + latestVersion + "' ";
+                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VersionNumber\" = '" + latestVersion + "' ";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
