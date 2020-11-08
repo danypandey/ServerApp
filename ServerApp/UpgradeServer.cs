@@ -35,19 +35,19 @@ namespace ServerApp
             return validateVersion;
         }
 
-        public async Task<Result> fetchMSILink(string VersionNumber)
+        public async Task<byte[]> FetchMSI(string VersionNumber)
         {
-            Result latestMSILink = null;
+            byte[] latestMSI = null;
             database.con.Open();
             try
             {
-                latestMSILink = await database.fetchMsiLink(VersionNumber);
+                latestMSI = await database.fetchMSI(VersionNumber);
             }
             catch (Exception msg)
             {
             }
             database.con.Close();
-            return latestMSILink;
+            return latestMSI;
         }
 
         public async Task<Result> NotifyAllClients()

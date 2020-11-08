@@ -4,6 +4,7 @@ using UserCommonApp;
 using System.ServiceModel;
 using Ziroh.Misc.Logging;
 using Npgsql;
+using System.Net;
 
 namespace ServerApp
 {
@@ -64,11 +65,11 @@ namespace ServerApp
             }
         }
 
-        internal async Task<Result> fetchMsiLink(string versionNumber)
+        internal async Task<byte[]> fetchMSI(string versionNumber)
         {
             float latestVersion;
             bool num = float.TryParse(versionNumber, out latestVersion);
-
+            byte[] msiFile = null;
             try
             {
                 var cmd = new NpgsqlCommand();
@@ -85,10 +86,35 @@ namespace ServerApp
             {
                 Console.WriteLine(msg);
             }
-            return new Result
+
+            if(!String.IsNullOrEmpty(linkMSI))
             {
-                latestVersionLink = linkMSI
-            };
+                msiFile = await DownloadBinaries(linkMSI);
+            }
+
+            return msiFile;
+        }
+
+        private async Task<byte[]> DownloadBinaries(string url)
+        {
+            byte[] fileData = null;
+            if (!String.IsNullOrEmpty(url))
+            {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                try
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        fileData = client.DownloadData(url);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            return fileData;
         }
 
         internal async Task<Result> notifyAllClients()

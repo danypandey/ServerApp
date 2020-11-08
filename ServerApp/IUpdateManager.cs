@@ -20,7 +20,7 @@ namespace UserCommonApp
          */
         [OperationContract]
         [WebGet(UriTemplate = "/updateservice/download/{VersionNumber}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<Result> fetchMSILink(string VersionNumber);
+        Task<byte[]> FetchMSI(string VersionNumber);
 
         /*
          * Post 
