@@ -11,8 +11,8 @@ namespace UserCommonApp
          * Get 
          */
         [OperationContract]
-        [WebGet(UriTemplate = "/updateservice/{clientVersion}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<ValidationResponse> ValidateClientVersion(string clientVersion);
+        [WebGet(UriTemplate = "/updateservice/{clientConfiguration}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Task<ValidationResponse> ValidateClientVersion(string clientConfiguration);
 
         /*
          * Get 

@@ -21,28 +21,102 @@ namespace ServerApp
         }
 
 
-        internal async Task<ValidationResponse> validateClientVersion(string clientVersion)
+        internal async Task<ValidationResponse> validateClientVersion(ValidationResponse clientConfiguration)
         {
             float currentClientVersion;
-            bool num = float.TryParse(clientVersion, out currentClientVersion);
+            bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);
 
-            try
+            if(clientConfiguration.clientPlatform == "Windows")
             {
-                var cmd = new NpgsqlCommand();
-                cmd.Connection = con;
-                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" LIMIT 1;";
-                NpgsqlDataReader reader = cmd.ExecuteReader();
-                if (reader.HasRows)
+                if(clientConfiguration.ClientOS_Bit == "64-bit")
                 {
-                    reader.Read();
-                    latestVersion = reader.GetFloat(0);
-                    mandatoryUpdate = reader.GetBoolean(2);
+                    try
+                    {
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Win64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            latestVersion = reader.GetFloat(0);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                }
+                else if (clientConfiguration.ClientOS_Bit == "32-bit")
+                {
+                    try
+                    {
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Win32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            latestVersion = reader.GetFloat(0);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
                 }
             }
-            catch (Exception msg)
+            else if (clientConfiguration.clientPlatform == "Linux")
             {
-                Console.WriteLine(msg);
+                if (clientConfiguration.ClientOS_Bit == "64-bit")
+                {
+                    try
+                    {
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Lin64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            latestVersion = reader.GetFloat(0);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                }
+                else if (clientConfiguration.ClientOS_Bit == "32-bit")
+                {
+                    try
+                    {
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Lin32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            latestVersion = reader.GetFloat(0);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                }
             }
+            else
+            {
+
+            }
+
 
             if (currentClientVersion == latestVersion)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UserCommonApp;
+using Newtonsoft.Json;
 
 
 namespace ServerApp
@@ -18,13 +19,14 @@ namespace ServerApp
             database.con.Close();
         }*/
         
-        public async Task<ValidationResponse> ValidateClientVersion(string clientVersion)
+        public async Task<ValidationResponse> ValidateClientVersion(string clientConfiguration)
         {
+            ValidationResponse clientConfigObject = JsonConvert.DeserializeObject<ValidationResponse>(clientConfiguration);
             ValidationResponse validateVersion = null;
             databasemanager.con.Open();
             try
             {
-                validateVersion = await databasemanager.validateClientVersion(clientVersion);
+                validateVersion = await databasemanager.validateClientVersion(clientConfigObject);
             }
             catch (Exception msg)
             {
