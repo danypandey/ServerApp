@@ -111,7 +111,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBase.cs" />
+    <Compile Include="DataBaseManager.cs" />
     <Compile Include="IUpdateManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

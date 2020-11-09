@@ -7,7 +7,7 @@ namespace ServerApp
 {
     class UpgradeServer : IUpdateManager
     {
-        DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
+        DataBaseManager databasemanager = new DataBaseManager("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
         /*public UpgradeServer()
         {
             database.con.Open();
@@ -21,45 +21,45 @@ namespace ServerApp
         public async Task<ValidationResponse> ValidateClientVersion(string clientVersion)
         {
             ValidationResponse validateVersion = null;
-            database.con.Open();
+            databasemanager.con.Open();
             try
             {
-                validateVersion = await database.validateClientVersion(clientVersion);
+                validateVersion = await databasemanager.validateClientVersion(clientVersion);
             }
             catch (Exception msg)
             {
             }
-            database.con.Close();
+            databasemanager.con.Close();
             return validateVersion;
         }
 
         public async Task<byte[]> FetchMSI(string VersionNumber)
         {
             byte[] latestMSI = null;
-            database.con.Open();
+            databasemanager.con.Open();
             try
             {
-                latestMSI = await database.fetchMSI(VersionNumber);
+                latestMSI = await databasemanager.fetchMSI(VersionNumber);
             }
             catch (Exception msg)
             {
             }
-            database.con.Close();
+            databasemanager.con.Close();
             return latestMSI;
         }
 
         public async Task<ValidationResponse> NotifyAllClients()
         {
             ValidationResponse clientNotify = null;
-            database.con.Open();
+            databasemanager.con.Open();
             try
             {
-                clientNotify = await database.notifyAllClients();
+                clientNotify = await databasemanager.notifyAllClients();
             }
             catch (Exception msg)
             {
             }
-            database.con.Close();
+            databasemanager.con.Close();
             return clientNotify;
         }
     }

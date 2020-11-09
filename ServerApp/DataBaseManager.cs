@@ -6,18 +6,18 @@ using System.Net;
 
 namespace ServerApp
 {
-    class DataBase
+    class DataBaseManager
     {
         private float latestVersion;
         private bool mandatoryUpdate;
-        private string linkMSI;
-        private string path;
+        private string MSILink;
+        private string databaseConnectionConfiguration;
         internal NpgsqlConnection con;
 
-        public DataBase(string databaseConfiguration)
+        public DataBaseManager(string databaseConfiguration)
         {
-            path = databaseConfiguration;
-            con = new NpgsqlConnection(path);
+            databaseConnectionConfiguration = databaseConfiguration;
+            con = new NpgsqlConnection(databaseConnectionConfiguration);
         }
 
 
@@ -77,7 +77,7 @@ namespace ServerApp
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    linkMSI = reader.GetString(1);
+                    MSILink = reader.GetString(1);
                 }
             }
             catch (Exception msg)
@@ -85,9 +85,9 @@ namespace ServerApp
                 Console.WriteLine(msg);
             }
 
-            if(!String.IsNullOrEmpty(linkMSI))
+            if(!String.IsNullOrEmpty(MSILink))
             {
-                msiFile = await DownloadBinaries(linkMSI);
+                msiFile = await DownloadBinaries(MSILink);
             }
 
             return msiFile;
