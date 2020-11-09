@@ -11,8 +11,8 @@ namespace ServerApp
         private float latestVersion;
         private bool mandatoryUpdate;
         private string linkMSI;
-        string path;
-        public NpgsqlConnection con;
+        private string path;
+        internal NpgsqlConnection con;
 
         public DataBase(string databaseConfiguration)
         {
