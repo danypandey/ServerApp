@@ -99,8 +99,9 @@
     <Reference Include="UserCommonApp">
       <HintPath>..\..\UserCommonApp\UserCommonApp\bin\Debug\UserCommonApp.dll</HintPath>
     </Reference>
-    <Reference Include="Ziroh.CommonLibrary">
-      <HintPath>..\..\Ziroh Libraries\Library1\Ziroh.CommonLibrary.dll</HintPath>
+    <Reference Include="Ziroh.CommonLibrary, Version=1.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ziroh Libraries\Library1\Ziroh.CommonLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Ziroh.CommonLibrary2">
       <HintPath>..\..\Ziroh Libraries\Library1\Ziroh.CommonLibrary2.dll</HintPath>

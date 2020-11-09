@@ -1,7 +1,6 @@
 ﻿using System;
 using Ziroh.Misc.Common;
 using UserCommonApp;
-using System.ServiceModel;
 
 namespace ServerApp
 {

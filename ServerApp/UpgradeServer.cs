@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UserCommonApp;
-using System.ServiceModel;
 
 
 namespace ServerApp
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class UpgradeServer : IUpdateManager
     {
         DataBase database = new DataBase("Host = localhost; User Id = postgres; Password = Dany@100; Database = UpdateService");
@@ -20,9 +18,9 @@ namespace ServerApp
             database.con.Close();
         }*/
         
-        public async Task<Result> ValidateClientVersion(string clientVersion)
+        public async Task<ValidationResponse> ValidateClientVersion(string clientVersion)
         {
-            Result validateVersion = null;
+            ValidationResponse validateVersion = null;
             database.con.Open();
             try
             {
@@ -50,9 +48,9 @@ namespace ServerApp
             return latestMSI;
         }
 
-        public async Task<Result> NotifyAllClients()
+        public async Task<ValidationResponse> NotifyAllClients()
         {
-            Result clientNotify = null;
+            ValidationResponse clientNotify = null;
             database.con.Open();
             try
             {

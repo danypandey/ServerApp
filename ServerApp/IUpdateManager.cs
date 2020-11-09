@@ -1,7 +1,6 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading.Tasks;
-using UserCommonApp;
 
 namespace UserCommonApp
 {
@@ -13,7 +12,7 @@ namespace UserCommonApp
          */
         [OperationContract]
         [WebGet(UriTemplate = "/updateservice/{clientVersion}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<Result> ValidateClientVersion(string clientVersion);
+        Task<ValidationResponse> ValidateClientVersion(string clientVersion);
 
         /*
          * Get 
@@ -27,7 +26,7 @@ namespace UserCommonApp
          */
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/updateservice/notify", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<Result> NotifyAllClients();
+        Task<ValidationResponse> NotifyAllClients();
     }
 }
 

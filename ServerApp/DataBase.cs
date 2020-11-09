@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UserCommonApp;
-using System.ServiceModel;
-using Ziroh.Misc.Logging;
 using Npgsql;
 using System.Net;
 
@@ -23,7 +21,7 @@ namespace ServerApp
         }
 
 
-        internal async Task<Result> validateClientVersion(string clientVersion)
+        internal async Task<ValidationResponse> validateClientVersion(string clientVersion)
         {
             float currentClientVersion;
             bool num = float.TryParse(clientVersion, out currentClientVersion);
@@ -48,17 +46,17 @@ namespace ServerApp
 
             if (currentClientVersion == latestVersion)
             {
-                return new Result
+                return new ValidationResponse
                 {
-                    Error_code = 0,
+                    error_code = 0,
                     CurrentStableVersion = default(string)
                 };
             }
             else
             {
-                return new Result
+                return new ValidationResponse
                 {
-                    Error_code = 1,
+                    error_code = 1,
                     CurrentStableVersion = latestVersion.ToString(),
                     MandatoryUpdate = mandatoryUpdate
                 };
@@ -117,7 +115,7 @@ namespace ServerApp
             return fileData;
         }
 
-        internal async Task<Result> notifyAllClients()
+        internal async Task<ValidationResponse> notifyAllClients()
         {
             throw new NotImplementedException();
         }
