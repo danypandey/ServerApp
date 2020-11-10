@@ -26,9 +26,9 @@ namespace ServerApp
             float currentClientVersion;
             bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);
 
-            if(clientConfiguration.clientPlatform == "Windows")
+            if(string.Equals(clientConfiguration.clientPlatform, "Windows"))
             {
-                if(clientConfiguration.ClientOS_Bit == "64-bit")
+                if(clientConfiguration.is64Bit)
                 {
                     try
                     {
@@ -48,7 +48,7 @@ namespace ServerApp
                         Console.WriteLine(msg);
                     }
                 }
-                else if (clientConfiguration.ClientOS_Bit == "32-bit")
+                else if (!clientConfiguration.is64Bit)
                 {
                     try
                     {
@@ -69,9 +69,9 @@ namespace ServerApp
                     }
                 }
             }
-            else if (clientConfiguration.clientPlatform == "Linux")
+            else if (string.Equals(clientConfiguration.clientPlatform, "Linux"))
             {
-                if (clientConfiguration.ClientOS_Bit == "64-bit")
+                if (clientConfiguration.is64Bit)
                 {
                     try
                     {
@@ -91,7 +91,7 @@ namespace ServerApp
                         Console.WriteLine(msg);
                     }
                 }
-                else if (clientConfiguration.ClientOS_Bit == "32-bit")
+                else if (!clientConfiguration.is64Bit)
                 {
                     try
                     {
@@ -112,9 +112,57 @@ namespace ServerApp
                     }
                 }
             }
+            else if(string.Equals(clientConfiguration.clientPlatform, "OSX"))
+            {
+                if (clientConfiguration.is64Bit)
+                {
+                    try
+                    {
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Mac64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            latestVersion = reader.GetFloat(0);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                }
+                else if (!clientConfiguration.is64Bit)
+                {
+                    try
+                    {
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Mac32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            latestVersion = reader.GetFloat(0);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                }
+            }
             else
             {
+                return new ValidationResponse
+                {
+                    error_code = 0,
 
+                    // Need to handle errors here
+                };
             }
 
 
@@ -137,16 +185,16 @@ namespace ServerApp
             }
         }
 
-        internal async Task<byte[]> fetchMSI(string versionNumber)
+        internal async Task<byte[]> fetchMSI(ValidationResponse clientconfig)
         {
-            float latestVersion;
-            bool num = float.TryParse(versionNumber, out latestVersion);
+            float MSI_Version;
+            bool num = float.TryParse(clientconfig.CurrentStableVersion, out MSI_Version);
             byte[] msiFile = null;
             try
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VersionNumber\" = '" + latestVersion + "' ";
+                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VersionNumber\" = '" + MSI_Version + "'";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {

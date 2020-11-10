@@ -18,8 +18,8 @@ namespace UserCommonApp
          * Get 
          */
         [OperationContract]
-        [WebGet(UriTemplate = "/updateservice/download/{VersionNumber}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<byte[]> FetchMSI(string VersionNumber);
+        [WebGet(UriTemplate = "/updateservice/download/{clientConfiguration}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Task<byte[]> FetchMSI(string clientConfiguration);
 
         /*
          * Post 
