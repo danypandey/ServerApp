@@ -8,7 +8,7 @@ namespace ServerApp
 {
     class DataBaseManager
     {
-        private float latestVersion;
+        private string latestVersion;
         private bool mandatoryUpdate;
         private string MSILink;
         private string databaseConnectionConfiguration;
@@ -23,8 +23,8 @@ namespace ServerApp
 
         internal async Task<ValidationResponse> validateClientVersion(ValidationResponse clientConfiguration)
         {
-            float currentClientVersion;
-            bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);
+            /*float currentClientVersion;
+            bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);*/
 
             if(string.Equals(clientConfiguration.clientPlatform, "Windows"))
             {
@@ -34,12 +34,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Win64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Win64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetFloat(0);
+                            latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(2);
                         }
                     }
@@ -54,12 +54,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Win32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Win32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetFloat(0);
+                            latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(2);
                         }
                     }
@@ -77,12 +77,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Lin64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Lin64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetFloat(0);
+                            latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(2);
                         }
                     }
@@ -97,12 +97,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Lin32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Lin32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetFloat(0);
+                            latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(2);
                         }
                     }
@@ -120,12 +120,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Mac64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Mac64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetFloat(0);
+                            latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(2);
                         }
                     }
@@ -140,12 +140,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"Id\" = 'Mac32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Mac32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetFloat(0);
+                            latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(2);
                         }
                     }
@@ -166,19 +166,20 @@ namespace ServerApp
             }
 
 
-            if (currentClientVersion == latestVersion)
+            if (string.Equals(clientConfiguration.ClientVersionNumber, latestVersion))
             {
                 return new ValidationResponse
                 {
                     error_code = 0,
-                    CurrentStableVersion = default(string)
+                    isUpdateAvailable = false
                 };
             }
             else
             {
                 return new ValidationResponse
                 {
-                    error_code = 1,
+                    error_code = 0,
+                    isUpdateAvailable = true,
                     CurrentStableVersion = latestVersion.ToString(),
                     MandatoryUpdate = mandatoryUpdate
                 };
@@ -187,14 +188,12 @@ namespace ServerApp
 
         internal async Task<byte[]> fetchMSI(ValidationResponse clientconfig)
         {
-            float MSI_Version;
-            bool num = float.TryParse(clientconfig.CurrentStableVersion, out MSI_Version);
             byte[] msiFile = null;
             try
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT * FROM \"OStoreVersions\" WHERE \"VersionNumber\" = '" + MSI_Version + "'";
+                cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"VersionNumber\" = '" + clientconfig.CurrentStableVersion + "'";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
