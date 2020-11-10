@@ -10,7 +10,8 @@ namespace ServerApp
     {
         private string latestVersion;
         private bool mandatoryUpdate;
-        private string MSILink;
+        private string minimumSupportedVersion;
+        private string MSIName;
         private string databaseConnectionConfiguration;
         internal NpgsqlConnection con;
 
@@ -34,13 +35,14 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Win64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Win64'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(2);
+                            mandatoryUpdate = reader.GetBoolean(1);
+                            minimumSupportedVersion = reader.GetString(2);
                         }
                     }
                     catch (Exception msg)
@@ -54,13 +56,14 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Win32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Win32'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(2);
+                            mandatoryUpdate = reader.GetBoolean(1);
+                            minimumSupportedVersion = reader.GetString(2);
                         }
                     }
                     catch (Exception msg)
@@ -77,13 +80,14 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Lin64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Lin64'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(2);
+                            mandatoryUpdate = reader.GetBoolean(1);
+                            minimumSupportedVersion = reader.GetString(2);
                         }
                     }
                     catch (Exception msg)
@@ -97,13 +101,14 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Lin32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Lin32'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(2);
+                            mandatoryUpdate = reader.GetBoolean(1);
+                            minimumSupportedVersion = reader.GetString(2);
                         }
                     }
                     catch (Exception msg)
@@ -120,13 +125,14 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Mac64' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Mac64'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(2);
+                            mandatoryUpdate = reader.GetBoolean(1);
+                            minimumSupportedVersion = reader.GetString(2);
                         }
                     }
                     catch (Exception msg)
@@ -140,13 +146,14 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"Platform\" = 'Mac32' ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Mac32'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(2);
+                            mandatoryUpdate = reader.GetBoolean(1);
+                            minimumSupportedVersion = reader.GetString(2);
                         }
                     }
                     catch (Exception msg)
@@ -159,14 +166,49 @@ namespace ServerApp
             {
                 return new ValidationResponse
                 {
-                    error_code = 0,
+                    error_code = 1
+                };
+            }
 
-                    // Need to handle errors here
+            float currentClientVersion;
+            bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);
+
+            float minimumRequiredVersion;
+            bool num1 = float.TryParse(minimumSupportedVersion, out minimumRequiredVersion);
+
+            if(currentClientVersion == minimumRequiredVersion)
+            {
+                return new ValidationResponse
+                {
+                    error_code = 0,
+                    isUpdateAvailable = true,
+                    CurrentStableVersion = latestVersion,
+                    MandatoryUpdate = false
+                };
+            }
+            else if (currentClientVersion < minimumRequiredVersion)
+            {
+                return new ValidationResponse
+                {
+                    error_code = 0,
+                    isUpdateAvailable = true,
+                    CurrentStableVersion = latestVersion,
+                    MandatoryUpdate = true
+                };
+            }
+            else
+            {
+                return new ValidationResponse
+                {
+                    error_code = 0,
+                    isUpdateAvailable = true,
+                    CurrentStableVersion = latestVersion,
+                    MandatoryUpdate = false
                 };
             }
 
 
-            if (string.Equals(clientConfiguration.ClientVersionNumber, latestVersion))
+            /*if (string.Equals(clientConfiguration.ClientVersionNumber, latestVersion))
             {
                 return new ValidationResponse
                 {
@@ -183,7 +225,7 @@ namespace ServerApp
                     CurrentStableVersion = latestVersion.ToString(),
                     MandatoryUpdate = mandatoryUpdate
                 };
-            }
+            }*/
         }
 
         internal async Task<byte[]> fetchMSI(ValidationResponse clientconfig)
@@ -193,12 +235,12 @@ namespace ServerApp
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT * FROM \"OStorVersions\" WHERE \"VersionNumber\" = '" + clientconfig.CurrentStableVersion + "'";
+                cmd.CommandText = "SELECT \"MSIName\" FROM \"OStorVersions\" WHERE \"VersionNumber\" = '" + clientconfig.CurrentStableVersion + "' AND \"Platform\" = '" + clientconfig.clientPlatform + "'";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    MSILink = reader.GetString(1);
+                    MSIName = reader.GetString(1);
                 }
             }
             catch (Exception msg)
@@ -206,9 +248,9 @@ namespace ServerApp
                 Console.WriteLine(msg);
             }
 
-            if(!String.IsNullOrEmpty(MSILink))
+            if(!String.IsNullOrEmpty(MSIName))
             {
-                msiFile = await DownloadBinaries(MSILink);
+                msiFile = await DownloadBinaries(MSIName);
             }
 
             return msiFile;
