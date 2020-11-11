@@ -176,15 +176,28 @@ namespace ServerApp
             float minimumRequiredVersion;
             bool num1 = float.TryParse(minimumSupportedVersion, out minimumRequiredVersion);
 
-            if(currentClientVersion == minimumRequiredVersion)
+            if(currentClientVersion >= minimumRequiredVersion)
             {
-                return new ValidationResponse
+                if(mandatoryUpdate)
                 {
-                    error_code = 0,
-                    isUpdateAvailable = true,
-                    CurrentStableVersion = latestVersion,
-                    MandatoryUpdate = false
-                };
+                    return new ValidationResponse
+                    {
+                        error_code = 0,
+                        isUpdateAvailable = true,
+                        CurrentStableVersion = latestVersion,
+                        MandatoryUpdate = true
+                    };
+                }
+                else
+                {
+                    return new ValidationResponse
+                    {
+                        error_code = 0,
+                        isUpdateAvailable = true,
+                        CurrentStableVersion = latestVersion,
+                        MandatoryUpdate = false
+                    };
+                }
             }
             else if (currentClientVersion < minimumRequiredVersion)
             {
@@ -200,47 +213,59 @@ namespace ServerApp
             {
                 return new ValidationResponse
                 {
-                    error_code = 0,
-                    isUpdateAvailable = true,
-                    CurrentStableVersion = latestVersion,
-                    MandatoryUpdate = false
+                    error_code = 1
                 };
             }
-
-
-            /*if (string.Equals(clientConfiguration.ClientVersionNumber, latestVersion))
-            {
-                return new ValidationResponse
-                {
-                    error_code = 0,
-                    isUpdateAvailable = false
-                };
-            }
-            else
-            {
-                return new ValidationResponse
-                {
-                    error_code = 0,
-                    isUpdateAvailable = true,
-                    CurrentStableVersion = latestVersion.ToString(),
-                    MandatoryUpdate = mandatoryUpdate
-                };
-            }*/
         }
 
         internal async Task<byte[]> fetchMSI(ValidationResponse clientconfig)
         {
+            string ClientPlatform = null;
+            if (string.Equals(clientconfig.clientPlatform, "Windows"))
+            {
+                if(clientconfig.is64Bit)
+                {
+                    ClientPlatform = "Win64";
+                }
+                else
+                {
+                    ClientPlatform = "Win32";
+                }
+            }
+            else if (string.Equals(clientconfig.clientPlatform, "Linux"))
+            {
+                if (clientconfig.is64Bit)
+                {
+                    ClientPlatform = "Lin64";
+                }
+                else
+                {
+                    ClientPlatform = "Lin32";
+                }
+            }
+            else if (string.Equals(clientconfig.clientPlatform, "OSX"))
+            {
+                if (clientconfig.is64Bit)
+                {
+                    ClientPlatform = "Mac64";
+                }
+                else
+                {
+                    ClientPlatform = "Mac32";
+                }
+            }
+
             byte[] msiFile = null;
             try
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT \"MSIName\" FROM \"OStorVersions\" WHERE \"VersionNumber\" = '" + clientconfig.CurrentStableVersion + "' AND \"Platform\" = '" + clientconfig.clientPlatform + "'";
+                cmd.CommandText = "SELECT \"MSIName\" FROM \"OStorVersions\" WHERE \"VersionNumber\" = '" + clientconfig.CurrentStableVersion + "' AND \"Platform\" = '" + ClientPlatform + "'";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    MSIName = reader.GetString(1);
+                    MSIName = reader.GetString(0);
                 }
             }
             catch (Exception msg)
