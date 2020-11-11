@@ -24,9 +24,6 @@ namespace ServerApp
 
         internal async Task<ValidationResponse> validateClientVersion(ValidationResponse clientConfiguration)
         {
-            /*float currentClientVersion;
-            bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);*/
-
             if(string.Equals(clientConfiguration.clientPlatform, "Windows"))
             {
                 if(clientConfiguration.is64Bit)
@@ -218,49 +215,14 @@ namespace ServerApp
             }
         }
 
-        internal async Task<byte[]> fetchMSI(ValidationResponse clientconfig)
+        internal async Task<byte[]> fetchMSI(string UpgradeReferenceId)
         {
-            string ClientPlatform = null;
-            if (string.Equals(clientconfig.clientPlatform, "Windows"))
-            {
-                if(clientconfig.is64Bit)
-                {
-                    ClientPlatform = "Win64";
-                }
-                else
-                {
-                    ClientPlatform = "Win32";
-                }
-            }
-            else if (string.Equals(clientconfig.clientPlatform, "Linux"))
-            {
-                if (clientconfig.is64Bit)
-                {
-                    ClientPlatform = "Lin64";
-                }
-                else
-                {
-                    ClientPlatform = "Lin32";
-                }
-            }
-            else if (string.Equals(clientconfig.clientPlatform, "OSX"))
-            {
-                if (clientconfig.is64Bit)
-                {
-                    ClientPlatform = "Mac64";
-                }
-                else
-                {
-                    ClientPlatform = "Mac32";
-                }
-            }
-
             byte[] msiFile = null;
             try
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT \"MSIName\" FROM \"OStorVersions\" WHERE \"VersionNumber\" = '" + clientconfig.CurrentStableVersion + "' AND \"Platform\" = '" + ClientPlatform + "'";
+                cmd.CommandText = "SELECT \"MSI_Name\" FROM \"OStorVersions\" WHERE \"Upgrade_Reference_Id\" = '" + UpgradeReferenceId + "' ";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {

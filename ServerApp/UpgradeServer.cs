@@ -35,15 +35,13 @@ namespace ServerApp
             return validateVersion;
         }
 
-        public async Task<byte[]> FetchMSI(string clientConfiguration)
+        public async Task<byte[]> FetchMSI(string UpgradeReferenceId)
         {
-            ValidationResponse clientconfig = JsonConvert.DeserializeObject<ValidationResponse>(clientConfiguration);
-
             byte[] latestMSI = null;
             databasemanager.con.Open();
             try
             {
-                latestMSI = await databasemanager.fetchMSI(clientconfig);
+                latestMSI = await databasemanager.fetchMSI(UpgradeReferenceId);
             }
             catch (Exception msg)
             {
