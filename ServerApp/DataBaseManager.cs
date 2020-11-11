@@ -32,11 +32,12 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Win64'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Windows' AND \"Platform\" = 'x64'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
+                            clientConfiguration.UpgradeReferenceId = reader.GetString(0);
                             latestVersion = reader.GetString(0);
                             mandatoryUpdate = reader.GetBoolean(1);
                             minimumSupportedVersion = reader.GetString(2);
@@ -53,7 +54,7 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Win32'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Windows' AND \"Platform\" = 'x32'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
@@ -77,7 +78,7 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Lin64'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Linux' AND \"Platform\" = 'x64'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
@@ -98,7 +99,7 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Lin32'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Linux' AND \"Platform\" = 'x32'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
@@ -114,7 +115,7 @@ namespace ServerApp
                     }
                 }
             }
-            else if(string.Equals(clientConfiguration.clientPlatform, "OSX"))
+            else if(string.Equals(clientConfiguration.clientPlatform, "MAC"))
             {
                 if (clientConfiguration.is64Bit)
                 {
@@ -122,7 +123,7 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Mac64'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'MAC' AND \"Platform\" = 'x64'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
@@ -143,7 +144,7 @@ namespace ServerApp
                     {
                         var cmd = new NpgsqlCommand();
                         cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"VersionNumber\", \"MandatoryUpdate\", \"MinimumVersion\" FROM \"OStorVersions\" INNER JOIN \"OStorMinimumVersions\" ON \"Platform\" = \"SupportedPlatform\" WHERE \"Platform\" = 'Mac32'  ORDER BY \"ReleaseDate\" DESC LIMIT 1";
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'MAC' AND \"Platform\" = 'x32'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                         NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
