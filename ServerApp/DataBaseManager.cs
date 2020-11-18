@@ -12,6 +12,7 @@ namespace ServerApp
         private bool mandatoryUpdate;
         private string minimumSupportedVersion;
         private string MSIName;
+        private string upgradeReferenceId;
         private string databaseConnectionConfiguration;
         internal NpgsqlConnection con;
 
@@ -37,10 +38,10 @@ namespace ServerApp
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            clientConfiguration.UpgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(1);
-                            minimumSupportedVersion = reader.GetString(2);
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
                         }
                     }
                     catch (Exception msg)
