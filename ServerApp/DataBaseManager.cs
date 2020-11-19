@@ -59,14 +59,23 @@ namespace ServerApp
                 Console.WriteLine(msg);
             }
 
-            float currentClientVersion;
+            /*float currentClientVersion;
             bool num = float.TryParse(clientConfiguration.ClientVersionNumber, out currentClientVersion);
 
             float minimumRequiredVersion;
-            bool num1 = float.TryParse(minimumSupportedVersion, out minimumRequiredVersion);
+            bool num1 = float.TryParse(minimumSupportedVersion, out minimumRequiredVersion);*/
 
-            if (currentClientVersion >= minimumRequiredVersion)
+            if (float.Parse(clientConfiguration.ClientVersionNumber) == float.Parse(latestVersion))
             {
+                return new ValidationResponse
+                {
+                    error_code = 0,
+                    isUpdateAvailable = false
+                };
+            }
+            else if (float.Parse(clientConfiguration.ClientVersionNumber) >= float.Parse(minimumSupportedVersion))
+            {
+                
                 if (mandatoryUpdate)
                 {
                     return new ValidationResponse
@@ -92,7 +101,7 @@ namespace ServerApp
                     };
                 }
             }
-            else if (currentClientVersion < minimumRequiredVersion)
+            else if (float.Parse(clientConfiguration.ClientVersionNumber) < float.Parse(minimumSupportedVersion))
             {
                 if (installerPreference == "High")
                 {
