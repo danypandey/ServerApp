@@ -107,22 +107,11 @@ namespace ServerApp
                 }
                 else
                 {
-                    string OS_vers = clientConfiguration.clientPlatform;
-                    string platform = null;
-                    if(clientConfiguration.is64Bit)
-                    {
-                        platform = "x64";
-                    }
-                    else
-                    {
-                        platform = "x32";
-                    }
-
                     try
                     {
                         var cmd1 = new NpgsqlCommand();
                         cmd1.Connection = con;
-                        cmd1.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + OS_vers + "' AND \"Platform\" = '" + platform + "'  ORDER BY \"Release_Date\" DESC LIMIT 1";
+                        cmd1.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "' ";
                         NpgsqlDataReader reader = cmd1.ExecuteReader();
                         if (reader.HasRows)
                         {
