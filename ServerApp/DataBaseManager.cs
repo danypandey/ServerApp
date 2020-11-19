@@ -14,6 +14,7 @@ namespace ServerApp
         private string MSIName;
         private string upgradeReferenceId;
         private string databaseConnectionConfiguration;
+        private string installerPreference;
         internal NpgsqlConnection con;
 
         public DataBaseManager(string databaseConfiguration)
@@ -40,7 +41,7 @@ namespace ServerApp
             {
                 var cmd = new NpgsqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\", \"Installer_Preference\", FROM \"OStorVersions\" WHERE \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "'  ORDER BY \"Release_Date\" DESC LIMIT 1";
+                cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\", \"Installer_Preference\" FROM \"OStorVersions\" WHERE \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "'  ORDER BY \"Release_Date\" DESC LIMIT 1";
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
@@ -50,7 +51,7 @@ namespace ServerApp
                     mandatoryUpdate = reader.GetBoolean(2);
                     minimumSupportedVersion = reader.GetString(3);
                     //Release Date
-                    //Installer Preference
+                    installerPreference = reader.GetString(5);
                 }
             }
             catch (Exception msg)
@@ -93,7 +94,7 @@ namespace ServerApp
             }
             else if (currentClientVersion < minimumRequiredVersion)
             {
-                if (Installer_Preference == "High")
+                if (installerPreference == "High")
                 {
                     return new ValidationResponse
                     {
