@@ -60,9 +60,10 @@ namespace ServerApp
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(1);
-                            minimumSupportedVersion = reader.GetString(2);
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
                         }
                     }
                     catch (Exception msg)
@@ -84,9 +85,10 @@ namespace ServerApp
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(1);
-                            minimumSupportedVersion = reader.GetString(2);
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
                         }
                     }
                     catch (Exception msg)
@@ -105,9 +107,10 @@ namespace ServerApp
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(1);
-                            minimumSupportedVersion = reader.GetString(2);
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
                         }
                     }
                     catch (Exception msg)
@@ -129,9 +132,10 @@ namespace ServerApp
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(1);
-                            minimumSupportedVersion = reader.GetString(2);
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
                         }
                     }
                     catch (Exception msg)
@@ -150,9 +154,10 @@ namespace ServerApp
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            latestVersion = reader.GetString(0);
-                            mandatoryUpdate = reader.GetBoolean(1);
-                            minimumSupportedVersion = reader.GetString(2);
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
                         }
                     }
                     catch (Exception msg)
@@ -175,7 +180,68 @@ namespace ServerApp
             float minimumRequiredVersion;
             bool num1 = float.TryParse(minimumSupportedVersion, out minimumRequiredVersion);
 
-            if(currentClientVersion >= minimumRequiredVersion)
+            if (currentClientVersion >= minimumRequiredVersion)
+            {
+                if (mandatoryUpdate)
+                {
+                    return new ValidationResponse
+                    {
+                        error_code = 0,
+                        isUpdateAvailable = true,
+                        MandatoryUpdate = true,
+                        //ReleaseDate = releaseDate,
+                        UpgradeReferenceId = upgradeReferenceId,
+                        CurrentStableVersion = latestVersion
+                    };
+                }
+                else
+                {
+                    return new ValidationResponse
+                    {
+                        error_code = 0,
+                        isUpdateAvailable = true,
+                        MandatoryUpdate = false,
+                        //ReleaseDate = releaseDate,
+                        UpgradeReferenceId = upgradeReferenceId,
+                        CurrentStableVersion = latestVersion
+                    };
+                }
+            }
+            else if (currentClientVersion < minimumRequiredVersion)
+            {
+                if (Installer_Preference == "High")
+                {
+                    return new ValidationResponse
+                    {
+                        error_code = 0,
+                        isUpdateAvailable = true,
+                        MandatoryUpdate = true,
+                        //ReleaseDate = releaseDate,
+                        UpgradeReferenceId = upgradeReferenceId,
+                        CurrentStableVersion = latestVersion
+                    };
+                }
+                else
+                {
+                    return new ValidationResponse
+                    {
+                        error_code = 0,
+                        isUpdateAvailable = true,
+                        MandatoryUpdate = true,
+                        //ReleaseDate = releaseDate,
+                        //Low version needs to be installed
+                    };
+                }
+            }
+            else
+            {
+                return new ValidationResponse
+                {
+                    error_code = 1
+                };
+            }
+
+            /*if(currentClientVersion >= minimumRequiredVersion)
             {
                 if(mandatoryUpdate)
                 {
@@ -214,7 +280,7 @@ namespace ServerApp
                 {
                     error_code = 1
                 };
-            }
+            }*/
         }
 
         internal async Task<byte[]> fetchMSI(string UpgradeReferenceId)
@@ -239,6 +305,7 @@ namespace ServerApp
 
             if(!String.IsNullOrEmpty(MSIName))
             {
+                //string ConstructedUrl = baseUrl + Domain + Region + MSIName;                
                 msiFile = await DownloadBinaries(MSIName);
             }
 
