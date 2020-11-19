@@ -25,153 +25,37 @@ namespace ServerApp
 
         internal async Task<ValidationResponse> validateClientVersion(ValidationResponse clientConfiguration)
         {
-            if(string.Equals(clientConfiguration.clientPlatform, "Windows"))
+            string client_win_vers = clientConfiguration.clientPlatform;
+            string client_platform = null;
+            if (clientConfiguration.is64Bit)
             {
-                if(clientConfiguration.is64Bit)
-                {
-                    try
-                    {
-                        var cmd = new NpgsqlCommand();
-                        cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Windows' AND \"Platform\" = 'x64'  ORDER BY \"Release_Date\" DESC LIMIT 1";
-                        NpgsqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            upgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
-                        }
-                    }
-                    catch (Exception msg)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                }
-                else if (!clientConfiguration.is64Bit)
-                {
-                    try
-                    {
-                        var cmd = new NpgsqlCommand();
-                        cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Windows' AND \"Platform\" = 'x32'  ORDER BY \"Release_Date\" DESC LIMIT 1";
-                        NpgsqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            upgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
-                        }
-                    }
-                    catch (Exception msg)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                }
-            }
-            else if (string.Equals(clientConfiguration.clientPlatform, "Linux"))
-            {
-                if (clientConfiguration.is64Bit)
-                {
-                    try
-                    {
-                        var cmd = new NpgsqlCommand();
-                        cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Linux' AND \"Platform\" = 'x64'  ORDER BY \"Release_Date\" DESC LIMIT 1";
-                        NpgsqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            upgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
-                        }
-                    }
-                    catch (Exception msg)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                }
-                else if (!clientConfiguration.is64Bit)
-                {
-                    try
-                    {
-                        var cmd = new NpgsqlCommand();
-                        cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'Linux' AND \"Platform\" = 'x32'  ORDER BY \"Release_Date\" DESC LIMIT 1";
-                        NpgsqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            upgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
-                        }
-                    }
-                    catch (Exception msg)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                }
-            }
-            else if(string.Equals(clientConfiguration.clientPlatform, "MAC"))
-            {
-                if (clientConfiguration.is64Bit)
-                {
-                    try
-                    {
-                        var cmd = new NpgsqlCommand();
-                        cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'MAC' AND \"Platform\" = 'x64'  ORDER BY \"Release_Date\" DESC LIMIT 1";
-                        NpgsqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            upgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
-                        }
-                    }
-                    catch (Exception msg)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                }
-                else if (!clientConfiguration.is64Bit)
-                {
-                    try
-                    {
-                        var cmd = new NpgsqlCommand();
-                        cmd.Connection = con;
-                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Os_Version\" = 'MAC' AND \"Platform\" = 'x32'  ORDER BY \"Release_Date\" DESC LIMIT 1";
-                        NpgsqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            upgradeReferenceId = reader.GetString(0);
-                            latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
-                        }
-                    }
-                    catch (Exception msg)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                }
+                client_platform = "x64";
             }
             else
             {
-                return new ValidationResponse
+                client_platform = "x32";
+            }
+
+            try
+            {
+                var cmd = new NpgsqlCommand();
+                cmd.Connection = con;
+                cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\", \"Installer_Preference\", FROM \"OStorVersions\" WHERE \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "'  ORDER BY \"Release_Date\" DESC LIMIT 1";
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
                 {
-                    error_code = 1
-                };
+                    reader.Read();
+                    upgradeReferenceId = reader.GetString(0);
+                    latestVersion = reader.GetString(1);
+                    mandatoryUpdate = reader.GetBoolean(2);
+                    minimumSupportedVersion = reader.GetString(3);
+                    //Release Date
+                    //Installer Preference
+                }
+            }
+            catch (Exception msg)
+            {
+                Console.WriteLine(msg);
             }
 
             float currentClientVersion;
@@ -223,13 +107,45 @@ namespace ServerApp
                 }
                 else
                 {
+                    string OS_vers = clientConfiguration.clientPlatform;
+                    string platform = null;
+                    if(clientConfiguration.is64Bit)
+                    {
+                        platform = "x64";
+                    }
+                    else
+                    {
+                        platform = "x32";
+                    }
+
+                    try
+                    {
+                        var cmd1 = new NpgsqlCommand();
+                        cmd1.Connection = con;
+                        cmd1.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + OS_vers + "' AND \"Platform\" = '" + platform + "'  ORDER BY \"Release_Date\" DESC LIMIT 1";
+                        NpgsqlDataReader reader = cmd1.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            upgradeReferenceId = reader.GetString(0);
+                            latestVersion = reader.GetString(1);
+                            mandatoryUpdate = reader.GetBoolean(2);
+                            minimumSupportedVersion = reader.GetString(3);
+                        }
+                    }
+                    catch (Exception msg)
+                    {
+                        Console.WriteLine(msg);
+                    }
+
                     return new ValidationResponse
                     {
                         error_code = 0,
                         isUpdateAvailable = true,
                         MandatoryUpdate = true,
                         //ReleaseDate = releaseDate,
-                        //Low version needs to be installed
+                        UpgradeReferenceId = upgradeReferenceId,
+                        CurrentStableVersion = latestVersion
                     };
                 }
             }
@@ -240,47 +156,6 @@ namespace ServerApp
                     error_code = 1
                 };
             }
-
-            /*if(currentClientVersion >= minimumRequiredVersion)
-            {
-                if(mandatoryUpdate)
-                {
-                    return new ValidationResponse
-                    {
-                        error_code = 0,
-                        isUpdateAvailable = true,
-                        CurrentStableVersion = latestVersion,
-                        MandatoryUpdate = true
-                    };
-                }
-                else
-                {
-                    return new ValidationResponse
-                    {
-                        error_code = 0,
-                        isUpdateAvailable = true,
-                        CurrentStableVersion = latestVersion,
-                        MandatoryUpdate = false
-                    };
-                }
-            }
-            else if (currentClientVersion < minimumRequiredVersion)
-            {
-                return new ValidationResponse
-                {
-                    error_code = 0,
-                    isUpdateAvailable = true,
-                    CurrentStableVersion = latestVersion,
-                    MandatoryUpdate = true
-                };
-            }
-            else
-            {
-                return new ValidationResponse
-                {
-                    error_code = 1
-                };
-            }*/
         }
 
         internal async Task<byte[]> fetchMSI(string UpgradeReferenceId)
