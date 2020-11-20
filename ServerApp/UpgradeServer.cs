@@ -21,7 +21,7 @@ namespace ServerApp
         
         public async Task<ValidationResponse> ValidateClientVersion(string clientConfiguration)
         {
-            ValidationResponse clientConfigObject = JsonConvert.DeserializeObject<ValidationResponse>(clientConfiguration);
+            ClientResponse clientConfigObject = JsonConvert.DeserializeObject<ClientResponse>(clientConfiguration);
             ValidationResponse validateVersion = null;
             databasemanager.con.Open();
             try

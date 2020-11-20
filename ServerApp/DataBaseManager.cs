@@ -24,7 +24,7 @@ namespace ServerApp
         }
 
 
-        internal async Task<ValidationResponse> validateClientVersion(ValidationResponse clientConfiguration)
+        internal async Task<ValidationResponse> validateClientVersion(ClientResponse clientConfiguration)
         {
             string client_win_vers = clientConfiguration.clientPlatform;
             string client_platform = null;
