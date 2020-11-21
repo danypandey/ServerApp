@@ -14,6 +14,7 @@ namespace ServerApp
         private string MSIName;
         private string upgradeReferenceId;
         private string databaseConnectionConfiguration;
+        private string releaseDate;
         private string installerPreference;
         internal NpgsqlConnection con;
 
@@ -50,7 +51,7 @@ namespace ServerApp
                     latestVersion = reader.GetString(1);
                     mandatoryUpdate = reader.GetBoolean(2);
                     minimumSupportedVersion = reader.GetString(3);
-                    //Release Date
+                    releaseDate = reader.GetDate(4).ToString();
                     installerPreference = reader.GetString(5);
                 }
             }
@@ -83,7 +84,7 @@ namespace ServerApp
                         error_code = 0,
                         isUpdateAvailable = true,
                         MandatoryUpdate = true,
-                        //ReleaseDate = releaseDate,
+                        ReleaseDate = releaseDate,
                         UpgradeReferenceId = upgradeReferenceId,
                         CurrentStableVersion = latestVersion
                     };
@@ -95,7 +96,7 @@ namespace ServerApp
                         error_code = 0,
                         isUpdateAvailable = true,
                         MandatoryUpdate = false,
-                        //ReleaseDate = releaseDate,
+                        ReleaseDate = releaseDate,
                         UpgradeReferenceId = upgradeReferenceId,
                         CurrentStableVersion = latestVersion
                     };
@@ -110,7 +111,7 @@ namespace ServerApp
                         error_code = 0,
                         isUpdateAvailable = true,
                         MandatoryUpdate = true,
-                        //ReleaseDate = releaseDate,
+                        ReleaseDate = releaseDate,
                         UpgradeReferenceId = upgradeReferenceId,
                         CurrentStableVersion = latestVersion
                     };
@@ -121,7 +122,7 @@ namespace ServerApp
                     {
                         var cmd1 = new NpgsqlCommand();
                         cmd1.Connection = con;
-                        cmd1.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Minimum_Version_Supported\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "' ";
+                        cmd1.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "' ";
                         NpgsqlDataReader reader = cmd1.ExecuteReader();
                         if (reader.HasRows)
                         {
@@ -129,7 +130,7 @@ namespace ServerApp
                             upgradeReferenceId = reader.GetString(0);
                             latestVersion = reader.GetString(1);
                             mandatoryUpdate = reader.GetBoolean(2);
-                            minimumSupportedVersion = reader.GetString(3);
+                            releaseDate = reader.GetDate(3).ToString();
                         }
                     }
                     catch (Exception msg)
@@ -142,7 +143,7 @@ namespace ServerApp
                         error_code = 0,
                         isUpdateAvailable = true,
                         MandatoryUpdate = true,
-                        //ReleaseDate = releaseDate,
+                        ReleaseDate = releaseDate,
                         UpgradeReferenceId = upgradeReferenceId,
                         CurrentStableVersion = latestVersion
                     };
