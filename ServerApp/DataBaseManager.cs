@@ -120,17 +120,16 @@ namespace ServerApp
                 {
                     try
                     {
-                        var cmd1 = new NpgsqlCommand();
-                        cmd1.Connection = con;
-                        cmd1.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Mandatory_Update\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "' ";
-                        NpgsqlDataReader reader = cmd1.ExecuteReader();
+                        var cmd = new NpgsqlCommand();
+                        cmd.Connection = con;
+                        cmd.CommandText = "SELECT \"Upgrade_Reference_Id\", \"Binary_Version_Number\", \"Release_Date\" FROM \"OStorVersions\" WHERE \"Binary_Version_Number\" = '" + minimumSupportedVersion + "' AND \"Os_Version\" = '" + client_win_vers + "' AND \"Platform\" = '" + client_platform + "' ";
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
                         if (reader.HasRows)
                         {
                             reader.Read();
                             upgradeReferenceId = reader.GetString(0);
                             latestVersion = reader.GetString(1);
-                            mandatoryUpdate = reader.GetBoolean(2);
-                            releaseDate = reader.GetDate(3).ToString();
+                            releaseDate = reader.GetDate(2).ToString();
                         }
                     }
                     catch (Exception msg)

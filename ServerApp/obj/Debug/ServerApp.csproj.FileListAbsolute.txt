@@ -37,8 +37,8 @@ D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\bin\Debug\Ziroh.CommonLibrary.pdb
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\bin\Debug\Ziroh.WebServicesAndLogging.pdb
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\bin\Debug\Ziroh.WebServicesAndLogging.dll.config
-D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\obj\Debug\ServerApp.csprojAssemblyReference.cache
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\obj\Debug\ServerApp.csproj.CoreCompileInputs.cache
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\obj\Debug\ServerApp.csproj.CopyComplete
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\obj\Debug\Ziroh.Cloud.ServerLibrary.exe
 D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\obj\Debug\Ziroh.Cloud.ServerLibrary.pdb
+D:\Ziroh Labs\Internship Date(8-10-2020)\OStorUpdateManager\ServerApp\ServerApp\obj\Debug\ServerApp.csprojAssemblyReference.cache
